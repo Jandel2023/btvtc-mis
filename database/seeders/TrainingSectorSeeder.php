@@ -32,6 +32,8 @@ class TrainingSectorSeeder extends Seeder
 
             ['sector_name' => 'Food Processing'],
 
+            ['sector_name' => 'Engineering'],
+
         ]);
     }
 }
