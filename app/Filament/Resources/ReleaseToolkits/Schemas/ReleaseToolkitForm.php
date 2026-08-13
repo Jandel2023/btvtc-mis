@@ -6,6 +6,8 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
+use app\Enums\ScholarshipProgram;
+
 
 class ReleaseToolkitForm
 {
@@ -19,11 +21,13 @@ class ReleaseToolkitForm
                 TextInput::make('last_name')
                     ->required(),
                 Select::make('qualification_id')
-                  ->relationship('qualifications','qualification_code')
+                    ->relationship('qualifications', 'qualification_code')
                     ->required(),
                 TextInput::make('contact_number'),
-                TextInput::make('scholarship_program')
-                    ->required(),
+            Select::make('scholarship_program')
+                ->label('Scholarship Program')
+                ->options(ScholarshipProgram::class)
+                ->required(),
                 DatePicker::make('date_recieved'),
             ]);
     }

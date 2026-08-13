@@ -15,16 +15,12 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ReleaseToolkitResource extends Resource
 {
     protected static ?string $model = ReleaseToolkit::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
-    protected static ?string $recordTitleAttribute = 'ReleaseToolkit';
 
     public static function form(Schema $schema): Schema
     {
@@ -56,13 +52,5 @@ class ReleaseToolkitResource extends Resource
             'view' => ViewReleaseToolkit::route('/{record}'),
             'edit' => EditReleaseToolkit::route('/{record}/edit'),
         ];
-    }
-
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Enums\UserRole;
 
+
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
@@ -17,6 +18,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
+        $this->call([
+            QualificationLevelSeeder::class,
+            TrainingSectorSeeder::class,
+            QualificationSeeder::class,
+        ]);
 
         User::factory()->create([
             'name' => 'jandel',

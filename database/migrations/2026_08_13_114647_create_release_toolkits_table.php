@@ -24,7 +24,6 @@ return new class extends Migration
             $table->string('scholarship_program');
             $table->date('date_recieved')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

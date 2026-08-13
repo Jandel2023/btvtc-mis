@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\ReleaseToolkits\Schemas;
 
-use App\Models\ReleaseToolkit;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
@@ -30,9 +29,6 @@ class ReleaseToolkitInfolist
                 TextEntry::make('updated_at')
                     ->dateTime()
                     ->placeholder('-'),
-                TextEntry::make('deleted_at')
-                    ->dateTime()
-                    ->visible(fn (ReleaseToolkit $record): bool => $record->trashed()),
             ]);
     }
 }
