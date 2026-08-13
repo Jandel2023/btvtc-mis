@@ -16,7 +16,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use App\Enums\UserRole;
-
+use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
 {
@@ -53,6 +53,12 @@ class UserResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereKeyNot(auth()->id());
     }
 
     public static function getPages(): array

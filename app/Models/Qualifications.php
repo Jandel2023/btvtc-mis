@@ -19,5 +19,10 @@ class Qualifications extends Model
         return $this->belongsTo(TrainingSector::class);
     }
 
+    public function releaseToolkits()
+    {
+        return $this->hasMany(ReleaseToolkit::class);
+    }
+
    
 }

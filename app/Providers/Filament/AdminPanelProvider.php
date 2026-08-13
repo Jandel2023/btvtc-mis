@@ -33,8 +33,9 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->spa()
             ->login()
+            ->brandLogo(asset('images/btvtc-logo.ico'))
+            ->brandLogoHeight('3rem')
             ->favicon(asset('images/btvtc-logo.ico'))
-            ->passwordReset()
             ->emailVerification()
             ->emailChangeVerification()
             ->profile()
@@ -45,7 +46,7 @@ class AdminPanelProvider extends PanelProvider
             // ->hiddenErrorNotification(403)
             // ->disabledErrorNotification(503)
             ->colors([
-                'primary' => Color::Yellow,
+                'primary' => Color::Green,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

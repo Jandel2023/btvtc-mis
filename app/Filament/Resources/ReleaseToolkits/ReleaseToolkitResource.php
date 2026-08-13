@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use App\Enums\UserRole;
 
 class ReleaseToolkitResource extends Resource
 {
@@ -35,6 +36,11 @@ class ReleaseToolkitResource extends Resource
     public static function table(Table $table): Table
     {
         return ReleaseToolkitsTable::configure($table);
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole(UserRole::Administrator) || auth()->user()->hasRole(UserRole::Trainer);
     }
 
     public static function getRelations(): array
