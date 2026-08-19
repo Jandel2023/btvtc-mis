@@ -18,7 +18,7 @@
 
     <div class="flex items-center justify-center min-h-screen px-6">
         <div class="relative w-full max-w-3xl">
-                    <img src="{{ asset('images/btvtc-logo.ico') }}" alt="BTVTC logo" class="w-48 h-48 lg:w-80 lg:h-80 flex-shrink-0 mx-auto rounded-full shadow-lg shadow-green-200">
+                    <img src="{{ asset('images/btvtc-logo.png') }}" alt="BTVTC logo" class="w-48 h-48 lg:w-80 lg:h-80 flex-shrink-0 mx-auto rounded-full shadow-lg shadow-green-200">
                     <div class="text-center">
                         <h1 class="text-3xl lg:text-4xl font-extrabold text-green-900">BTVTC Management Information System</h1>
                         <p class="mt-3 text-slate-600 text-lg">Streamlining operations and enhancing efficiency with secure, modern tools.</p>

@@ -24,5 +24,10 @@ class Qualifications extends Model
         return $this->hasMany(ReleaseToolkit::class);
     }
 
+    public function screenings()
+    {
+        return $this->hasMany(Screening::class);
+    }
+
    
 }
