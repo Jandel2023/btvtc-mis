@@ -1,15 +1,15 @@
 {
     "agents": [
-        "copilot"
+        "claude_code"
     ],
     "cloud": true,
-    "guidelines": true,
     "packages": [
         "filament/filament"
     ],
     "skills": [
         "laravel-best-practices",
         "pest-testing",
+        "tailwindcss-development",
         "deploying-laravel-cloud"
     ]
 }
