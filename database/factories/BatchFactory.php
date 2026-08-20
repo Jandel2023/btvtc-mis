@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Qualifications;
+use App\Models\Batch;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Qualifications>
+ * @extends Factory<Batch>
  */
-class QualificationsFactory extends Factory
+class BatchFactory extends Factory
 {
     /**
      * Define the model's default state.

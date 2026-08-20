@@ -31,7 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->spa()
             ->login()
             ->databaseNotifications()
-            ->brandLogo(asset('images/btvtc-logo.png'))
+            ->brandLogo(asset('images/btvtc-logo.ico'))
             ->brandLogoHeight('3rem')
             ->favicon(asset('images/btvtc-logo.ico'))
             ->emailVerification()

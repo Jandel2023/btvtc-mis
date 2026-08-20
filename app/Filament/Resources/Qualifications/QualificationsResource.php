@@ -15,19 +15,12 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use App\Enums\UserRole;
+
 class QualificationsResource extends Resource
 {
     protected static ?string $model = Qualifications::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
-    protected static ?string $recordTitleAttribute = 'Qualifications';
-
-    public static function canViewAny(): bool
-    {
-        return auth()->user()->hasRole(UserRole::Administrator);
-    }
 
     public static function form(Schema $schema): Schema
     {

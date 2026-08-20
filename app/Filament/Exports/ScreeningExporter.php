@@ -8,6 +8,8 @@ use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Illuminate\Support\Str;
+use Filament\Notifications\Notification;
+use OpenSpout\Writer\XLSX\Options;
 
 class ScreeningExporter extends Exporter
 {
@@ -55,6 +57,17 @@ class ScreeningExporter extends Exporter
         ];
     }
 
+    // public function getXlsxWriterOptions(): ?Options
+    // {
+    //     $options = new Options();
+
+    //     $options->setTempFolder(
+    //         storage_path('app/temp')
+    //     );
+
+    //     return $options;
+    // }
+
     public static function getCompletedNotificationTitle(
         Export $export
     ): string {
@@ -77,10 +90,5 @@ class ScreeningExporter extends Exporter
         return $body;
     }
 
-    public function getFormats(): array
-    {
-        return [
-            ExportFormat::Xlsx,
-        ];
-    }
+
 }

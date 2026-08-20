@@ -12,10 +12,20 @@ class UserInfolist
         return $schema
             ->components([
                 TextEntry::make('name'),
+                TextEntry::make('qualification_id')
+                    ->numeric()
+                    ->placeholder('-'),
                 TextEntry::make('email')
                     ->label('Email address'),
                 TextEntry::make('email_verified_at')
                     ->dateTime()
+                    ->placeholder('-'),
+                TextEntry::make('phone')
+                    ->placeholder('-'),
+                TextEntry::make('dob')
+                    ->date()
+                    ->placeholder('-'),
+                TextEntry::make('id_number')
                     ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()
@@ -23,6 +33,8 @@ class UserInfolist
                 TextEntry::make('updated_at')
                     ->dateTime()
                     ->placeholder('-'),
+                TextEntry::make('role')
+                    ->badge(),
             ]);
     }
 }

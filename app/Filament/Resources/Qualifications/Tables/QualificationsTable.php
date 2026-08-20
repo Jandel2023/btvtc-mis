@@ -9,8 +9,6 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Tables\Columns\SelectColumn;
-use Filament\Forms\Components\Select;
 
 class QualificationsTable
 {
@@ -22,17 +20,28 @@ class QualificationsTable
                     ->searchable(),
                 TextColumn::make('qualification_title')
                     ->searchable(),
-               TextColumn::make('qualificationLevel.code')
-                    ->searchable(),
-                TextColumn::make('trainingSector.sector_name')
-                    ->searchable(),
-                TextColumn::make('training_hours')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('competency_standard')
-                    ->searchable()
-                    ->wrap()
-                     ->lineClamp(1),
+            TextColumn::make('qualificationLevel.code')
+                ->label('Qualification Level')
+                ->sortable()
+                ->searchable(),
+            TextColumn::make('trainingSector.sector_name')
+                ->label('Training Sector')
+                ->sortable()
+                ->searchable(),
+            TextColumn::make('training_hours')
+                ->label('Training Hours')
+                ->formatStateUsing(function ($state) {
+                    if (! $state) {
+                        return '-';
+                    }
+
+                    $days = ceil($state / 8);
+
+                    return "{$state} hrs / {$days} days";
+                })
+                ->sortable(),
+                // TextColumn::make('competency_standard')
+                //     ->searchable(),
                 IconColumn::make('is_active')
                     ->boolean(),
                 TextColumn::make('created_at')

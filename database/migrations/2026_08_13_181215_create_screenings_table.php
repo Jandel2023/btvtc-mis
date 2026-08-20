@@ -20,11 +20,10 @@ return new class extends Migration
             $table->integer('interview_score');
             $table->integer('total_score')->nullable();
             $table->string('phone')->nullable();
-            $table->foreignId('qualification_id')
+            $table->foreignId('batch_id')
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
-            $table->string('scholarship_program');
             $table->string('status')->nullable();
             $table->string('address')->nullable();
             $table->date('date_screened')->nullable();

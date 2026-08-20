@@ -17,6 +17,11 @@ class QualificationLevelSeeder extends Seeder
         QualificationLevel::insert([
 
             [
+                'code' => '0',
+                'name' => 'Employee'
+            ],
+
+            [
                 'code' => 'NC I',
                 'name' => 'National Certificate I'
             ],

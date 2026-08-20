@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\IDApplications\Tables;
+namespace App\Filament\Resources\Batches\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -9,37 +9,42 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class IDApplicationsTable
+class BatchesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('application_number')
+                TextColumn::make('batch_code')
                     ->searchable(),
-                TextColumn::make('user.name')
+                TextColumn::make('ntp.rqm_code')
                     ->searchable(),
-                TextColumn::make('qualification_id')
-                    ->numeric()
-                    ->sortable(),
+                TextColumn::make('batch_name')
+                    ->searchable(),
+                TextColumn::make('qualification.qualification_code')
+                    ->label('Qualification')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('scholarship_program')
                     ->searchable(),
-                TextColumn::make('user_role')
-                    ->badge()
-                    ->searchable(),
-                TextColumn::make('application_date')
+                TextColumn::make('start_date')
                     ->date()
                     ->sortable(),
-                TextColumn::make('reason')
-                    ->searchable(),
+                TextColumn::make('end_date')
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('schedule')
+                    ->searchable()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('venue')
+                    ->searchable()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
-                    ->searchable(),
-                TextColumn::make('approved_by')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('approved_at')
-                    ->dateTime()
-                    ->sortable(),
+                    ->searchable()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

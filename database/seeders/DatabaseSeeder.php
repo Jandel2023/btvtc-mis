@@ -28,10 +28,45 @@ class DatabaseSeeder extends Seeder
             'name' => 'jandel',
             'email' => 'jandellopez1997@gmail.com',
             'role' => UserRole::Administrator,
+            'qualification_id' => NULL,
+            ]);
+
+        User::factory()->create([
+            'name' => 'Jesse',
+            'email' => 'jesse@gmail.com',
+            'role' => UserRole::Administrator,
+            'qualification_id' => NULL,
         ]);
 
-        User::factory(5)->create([
-            'role' => UserRole::Student,
+        User::factory()->create([
+            'name' => 'Harddiff',
+            'email' => 'harddiff@gmail.com',
+            'role' => UserRole::Registrar,
+            'qualification_id' => NULL,
         ]);
+
+        User::factory()->create([
+            'name' => 'Syrill',
+            'email' => 'syrill@gmail.com',
+            'role' => UserRole::Trainer,
+            'qualification_id' => 2,
+        ]);
+
+        User::factory()->create([
+            'name' => 'Joseph',
+            'email' => 'joseph@gmail.com',
+            'role' => UserRole::Trainer,
+            'qualification_id' => 3,
+        ]);
+
+        User::factory()->create([
+            'name' => 'Ryl',
+            'email' => 'ryl@gmail.com',
+            'role' => UserRole::Trainer,
+            'qualification_id' => 4,
+        ]);
+
+
+        
     }
 }

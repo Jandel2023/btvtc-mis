@@ -78,4 +78,6 @@ class ScreeningForm
         $set('total_score', $totalScore);
         $set('status', $totalScore < 75 ? 'Failed' : 'Passed');
     }
+
+
 }

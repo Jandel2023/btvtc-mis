@@ -29,10 +29,24 @@ class Qualifications extends Model
         return $this->hasMany(Screening::class);
     }
 
-    public function idApplications()
+    public function batches()
     {
-        return $this->hasMany(IDApplication::class);
+        return $this->hasMany(Batch::class);
     }
 
+ 
+    /**
+     * A qualification can have many users.
+     */
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    public function ntps()
+    {
+        return $this->hasMany(Ntp::class);
+    }
+   
    
 }

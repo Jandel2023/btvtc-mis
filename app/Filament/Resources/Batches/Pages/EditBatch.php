@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\IDApplications\Pages;
+namespace App\Filament\Resources\Batches\Pages;
 
-use App\Filament\Resources\IDApplications\IDApplicationsResource;
+use App\Filament\Resources\Batches\BatchResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 
-class EditIDApplications extends EditRecord
+class EditBatch extends EditRecord
 {
-    protected static string $resource = IDApplicationsResource::class;
+    protected static string $resource = BatchResource::class;
 
     protected function getHeaderActions(): array
     {

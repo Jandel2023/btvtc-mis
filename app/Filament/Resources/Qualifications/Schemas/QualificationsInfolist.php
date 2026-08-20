@@ -14,10 +14,8 @@ class QualificationsInfolist
             ->components([
                 TextEntry::make('qualification_code'),
                 TextEntry::make('qualification_title'),
-                TextEntry::make('qualification_level_id')
-                    ->numeric(),
-                TextEntry::make('training_sector_id')
-                    ->numeric(),
+                TextEntry::make('qualificationlevel.code'),
+                TextEntry::make('trainingsector.sector_name'),
                 TextEntry::make('training_hours')
                     ->numeric(),
                 TextEntry::make('competency_standard')

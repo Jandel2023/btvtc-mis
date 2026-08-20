@@ -9,8 +9,13 @@ class ReleaseToolkit extends Model
     //
     protected $guarded = [];
     
-  public function qualifications()
+  public function qualification()
     {
-        return $this->belongsTo(Qualifications::class, 'qualification_id');
+        return $this->belongsTo(Qualifications::class);
+    }
+
+    public function screening()
+    {
+        return $this->belongsTo(screening::class);
     }
 }

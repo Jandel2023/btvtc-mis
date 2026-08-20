@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use App\Enums\UserRole;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use app\Enums\UserRole;
-use Filament\Forms\Components\asSelectArray;
 
 class UserForm
 {
@@ -17,26 +17,24 @@ class UserForm
             ->components([
                 TextInput::make('name')
                     ->required(),
+                TextInput::make('qualification_id')
+                    ->numeric(),
                 TextInput::make('email')
                     ->label('Email address')
                     ->email()
                     ->required(),
-                Select::make('role')
-                    ->label('User Role')
-                    ->options(UserRole::class)
-                    ->required(),
-                DateTimePicker::make('email_verified_at')
-                    ->label('Email Verified At')
-                    ->default(fn () => now())
-                    ->nullable(),
+                DateTimePicker::make('email_verified_at'),
                 TextInput::make('password')
                     ->password()
-                    ->default(fn () => \Illuminate\Support\Facades\Hash::make('admin'))
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->required()
-                    ->hidden(
-                        fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord
-                    ),
+                    ->required(),
+                TextInput::make('phone')
+                    ->tel(),
+                DatePicker::make('dob'),
+                TextInput::make('id_number'),
+                Select::make('role')
+                    ->options(UserRole::class)
+                    ->default('Trainer')
+                    ->required(),
             ]);
     }
 }

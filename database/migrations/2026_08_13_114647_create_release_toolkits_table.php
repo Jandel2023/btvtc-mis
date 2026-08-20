@@ -13,16 +13,20 @@ return new class extends Migration
     {
         Schema::create('release_toolkits', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('middle_name')->nullable();
-            $table->string('last_name');
-            $table->foreignId('qualification_id')
+
+            $table->foreignId('batch_id')
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
-            $table->string('contact_number')->nullable();
-            $table->string('scholarship_program');
-            $table->date('date_recieved')->nullable();
+
+            $table->foreignId('screening_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
+
+            $table->date('date_recieved')->default(now());
+
+            $table->string('Notes')->nullable();
             $table->timestamps();
         });
     }

@@ -15,6 +15,16 @@ class QualificationSeeder extends Seeder
     {
         //
         Qualifications::insert([
+            [
+                'qualification_code' => 'Employee',
+                'qualification_title' => 'Baybay City Employee',
+                'qualification_level_id' => 1,
+                'training_sector_id' => 1,
+                'training_hours' => 1,
+                'competency_standard' => '0',
+                'description' => '0',
+                'is_active' => false,
+            ],
     [
         'qualification_code' => 'SMAW',
         'qualification_title' => 'Shielded Metal Arc Welding',

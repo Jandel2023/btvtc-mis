@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Users\Tables;
+namespace App\Filament\Resources\Ntps\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -9,29 +9,36 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class UsersTable
+class NtpsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('name')
+                TextColumn::make('rqm_code')
                     ->searchable(),
-                TextColumn::make('qualification_id')
+                TextColumn::make('qualification.qualification_code')
+                    ->label('Qualification')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('scholarship_program')
+                    ->searchable(),
+                TextColumn::make('approve_slots')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
-                TextColumn::make('email_verified_at')
-                    ->dateTime()
+                TextColumn::make('total_amount')
+                    ->numeric()
                     ->sortable(),
-                TextColumn::make('phone')
-                    ->searchable(),
-                TextColumn::make('dob')
+                TextColumn::make('indicative_start_date')
                     ->date()
                     ->sortable(),
-                TextColumn::make('id_number')
+                TextColumn::make('date_approve_by_tesda')
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('date_received')
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('note')
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -41,9 +48,6 @@ class UsersTable
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('role')
-                    ->badge()
-                    ->searchable(),
             ])
             ->filters([
                 //

@@ -16,6 +16,8 @@ class TrainingSectorSeeder extends Seeder
         //
         TrainingSector::insert([
 
+            ['sector_name' => 'Baybay Technical Vocational Training Center'],
+
             ['sector_name' => 'ICT'],
 
             ['sector_name' => 'Automotive'],

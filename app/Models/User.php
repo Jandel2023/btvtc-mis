@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\IDApplications;
 
 
+
 #[Hidden(['password', 'remember_token'])]
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
@@ -37,6 +38,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
+            'dob' => 'date',
         ];
     }
 
@@ -54,14 +56,20 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         return $this->avatar_url;
     }
 
-    public function idApplications(): HasMany
-    {
-        return $this->hasMany(IDApplications::class);
-    }
+   
 
 
     public function hasRole(UserRole $role): bool
     {
         return $this->role === $role;
+    }
+
+
+    /**
+     * A user belongs to one qualification.
+     */
+    public function qualification()
+    {
+        return $this->belongsTo(Qualifications::class);
     }
 }

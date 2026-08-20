@@ -15,23 +15,13 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use App\Enums\UserRole;
-use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\Users\Tables;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
-    protected static ?string $recordTitleAttribute = 'User';
-
-   
-
-    public static function canViewAny(): bool
-    {
-        return auth()->user()->hasRole(UserRole::Administrator);
-    }
 
     public static function form(Schema $schema): Schema
     {
@@ -53,12 +43,6 @@ class UserResource extends Resource
         return [
             //
         ];
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->whereKeyNot(auth()->id());
     }
 
     public static function getPages(): array

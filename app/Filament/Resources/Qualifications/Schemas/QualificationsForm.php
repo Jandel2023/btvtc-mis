@@ -2,11 +2,12 @@
 
 namespace App\Filament\Resources\Qualifications\Schemas;
 
+use App\Models\QualificationLevel;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
 
 class QualificationsForm
 {
@@ -19,12 +20,12 @@ class QualificationsForm
                 TextInput::make('qualification_title')
                     ->required(),
                 Select::make('qualification_level_id')
+                    ->label('QualificationLevel')
                     ->relationship('qualificationLevel','code')
                     ->required(),
-               Select::make('training_sector_id')
+                Select::make('training_sector_id')
                     ->relationship('trainingSector','sector_name')
-                    ->searchable()
-                    ->preload(),
+                    ->required(),
                 TextInput::make('training_hours')
                     ->required()
                     ->numeric(),
