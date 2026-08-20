@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Filament\Resources\IDApplications\Tables;
+
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+class IDApplicationsTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('application_number')
+                    ->searchable(),
+                TextColumn::make('user.name')
+                    ->searchable(),
+                TextColumn::make('qualification_id')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('scholarship_program')
+                    ->searchable(),
+                TextColumn::make('user_role')
+                    ->badge()
+                    ->searchable(),
+                TextColumn::make('application_date')
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('reason')
+                    ->searchable(),
+                TextColumn::make('status')
+                    ->searchable(),
+                TextColumn::make('approved_by')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('approved_at')
+                    ->dateTime()
+                    ->sortable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                //
+            ])
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+}

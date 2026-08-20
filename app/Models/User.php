@@ -13,6 +13,9 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Filament\Models\Contracts\HasAvatar;
 use App\Enums\UserRole;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\IDApplications;
 
 
 #[Hidden(['password', 'remember_token'])]
@@ -49,6 +52,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->avatar_url;
+    }
+
+    public function idApplications(): HasMany
+    {
+        return $this->hasMany(IDApplications::class);
     }
 
 

@@ -29,5 +29,10 @@ class Qualifications extends Model
         return $this->hasMany(Screening::class);
     }
 
+    public function idApplications()
+    {
+        return $this->hasMany(IDApplication::class);
+    }
+
    
 }

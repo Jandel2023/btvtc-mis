@@ -25,10 +25,18 @@ class UserForm
                     ->label('User Role')
                     ->options(UserRole::class)
                     ->required(),
-                DateTimePicker::make('email_verified_at'),
+                DateTimePicker::make('email_verified_at')
+                    ->label('Email Verified At')
+                    ->default(fn () => now())
+                    ->nullable(),
                 TextInput::make('password')
                     ->password()
-                    ->required(),
+                    ->default(fn () => \Illuminate\Support\Facades\Hash::make('admin'))
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->required()
+                    ->hidden(
+                        fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord
+                    ),
             ]);
     }
 }
