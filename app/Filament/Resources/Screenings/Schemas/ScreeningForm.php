@@ -2,14 +2,15 @@
 
 namespace App\Filament\Resources\Screenings\Schemas;
 
-use App\Enums\ScholarshipProgram;
+use App\Enums\Status;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
+
 
 class ScreeningForm
 {
@@ -18,66 +19,84 @@ class ScreeningForm
         return $schema
             ->components([
                 TextInput::make('fname')
-                    ->label('First Name')
+                    ->label('Firstname:')
                     ->required(),
                 TextInput::make('lname')
-                    ->label('Last Name')
+                    ->label('Lastname:')
                     ->required(),
                 TextInput::make('mname')
-                    ->label('Middle Name'),
-                TextInput::make('aptitude_score')
-                    ->label('Aptitude Score')
-                    ->required()
-                    ->numeric()
-                    ->live()
-                    ->afterStateUpdated(function (Set $set, ?string $state, Get $get): void {
-                        self::updateScoreAndStatus($set, $state, $get('interview_score'));
-                    }),
-                TextInput::make('interview_score')
-                    ->label('Interview Score')
-                    ->required()
-                    ->numeric()
-                    ->live()
-                    ->afterStateUpdated(function (Set $set, ?string $state, Get $get): void {
-                        self::updateScoreAndStatus($set, $get('aptitude_score'), $state);
-                    }),
+                    ->label('Middlename:'),
+            TextInput::make('aptitude_score')
+                ->label('Aptitude Score:')
+                ->numeric()
+                ->minValue(0)
+                ->maxValue(30)
+                ->required()
+                ->live()
+                ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                    $aptitude = (float) ($get('aptitude_score') ?? 0);
+                    $interview = (float) ($get('interview_score') ?? 0);
+
+                    $total = $aptitude + ($interview * 0.70);
+
+                    $set('total_score', round($total, 2));
+                    $set('status', $total >= 75 ? 'Passed' : 'Failed');
+                }),
+
+            TextInput::make('interview_score')
+                ->label('Interview Score:')
+                ->numeric()
+                ->minValue(0)
+                ->maxValue(100)
+                ->required()
+                ->live()
+                ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                    $aptitude = (float) ($get('aptitude_score') ?? 0);
+                    $interview = (float) ($get('interview_score') ?? 0);
+
+                    $total = $aptitude + ($interview * 0.70);
+
+                    $set('total_score', round($total, 2));
+                    $set('status', $total >= 75 ? 'Passed' : 'Failed');
+                }),
+
                 TextInput::make('total_score')
-                    ->label('Total Score')
+                    ->label('Total Score:')
                     ->numeric()
-                    ->readOnly(),
-                Hidden::make('status'),
+                    ->readOnly()
+                    ->dehydrated()
+                    ->step(0.01),
+                Select::make('status')
+                    ->label('Status')
+                    ->options([
+                        'Passed' => 'Passed',
+                        'Failed' => 'Failed',
+                    ])
+                    ->required()
+                    ->disabled()
+                    ->dehydrated(),
                 TextInput::make('phone')
-                    ->tel(),
-                Select::make('qualification_id')
-                    ->relationship('qualification', 'qualification_code')
+                    ->tel()
+                    ->prefix('+63')
+                    ->numeric()
+                    ->maxLength(10),
+                Select::make('batch_id')
+                    ->relationship('Batch','batch_name')
                     ->required(),
-                Select::make('scholarship_program')
-                    ->label('Scholarship Program')
-                    ->options(ScholarshipProgram::class)
-                    ->required(),
+
+        
                 TextInput::make('address'),
                 DatePicker::make('date_screened')
-                    ->default(now())
-                    ->required(),
-                TextInput::make('remarks')
-                    ->label('Remarks')
-                    ->maxLength(255)
-                    ->nullable()
-                    ->helperText('Optional')
-                    ->columnSpanFull()
-                    ->placeholder('Enter remarks here...'),
-                TextInput::make('screened_by')
-                    ->default('Admin'),
-            ]);
-    }
-
-    private static function updateScoreAndStatus(Set $set, mixed $aptitudeScore, mixed $interviewScore): void
-    {
-        $totalScore = (float) ($aptitudeScore ?? 0) + ((float) ($interviewScore ?? 0) / 100 * 70);
-
-        $set('total_score', $totalScore);
-        $set('status', $totalScore < 75 ? 'Failed' : 'Passed');
-    }
-
-
+                    ->default(now()),
+                TextInput::make('remarks'),
+               Select::make('screened_by')
+                    ->label('Screened By')
+                    ->default(fn () => Auth::user()?->name)
+                    ->options(
+                        \App\Models\User::pluck('name', 'name')
+                    )
+                    ->searchable()
+                    ->preload(),
+                            ]);
+                    }
 }

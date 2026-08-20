@@ -25,4 +25,9 @@ class Screening extends Model
     {
         return $this->belongsTo(Qualifications::class);
     }
+
+    public function batch()
+    {
+        return $this->belongsTo(Batch::class);
+    }
 }

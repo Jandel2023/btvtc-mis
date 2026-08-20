@@ -72,4 +72,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     {
         return $this->belongsTo(Qualifications::class);
     }
+
+    public function screenedBy()
+    {
+        return $this->belongsTo(User::class, 'screened_by');
+    }
 }

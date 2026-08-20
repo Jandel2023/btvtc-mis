@@ -3,13 +3,10 @@
 namespace App\Filament\Exports;
 
 use App\Models\Screening;
-use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Illuminate\Support\Str;
-use Filament\Notifications\Notification;
-use OpenSpout\Writer\XLSX\Options;
 
 class ScreeningExporter extends Exporter
 {
@@ -18,77 +15,37 @@ class ScreeningExporter extends Exporter
     public static function getColumns(): array
     {
         return [
-            ExportColumn::make('full_name')
-                ->label('Full Name')
-                ->state(fn(Screening $record): string => $record->full_name),
-
-            ExportColumn::make('qualification.qualification_code')
-                ->label('Qualification'),
-
-            ExportColumn::make('aptitude_score')
-                ->label('Aptitude Score'),
-
-            ExportColumn::make('interview_score')
-                ->label('Interview Score'),
-
-            ExportColumn::make('total_score')
-                ->label('Total Score'),
-
-            ExportColumn::make('status')
-                ->label('Status'),
-
-            ExportColumn::make('phone')
-                ->label('Phone'),
-
-            ExportColumn::make('scholarship_program')
-                ->label('Scholarship Program'),
-
-            ExportColumn::make('address')
-                ->label('Address'),
-
-            ExportColumn::make('date_screened')
-                ->label('Date Screened'),
-
-            ExportColumn::make('remarks')
-                ->label('Remarks'),
-
-            ExportColumn::make('screened_by')
-                ->label('Screened By'),
+            ExportColumn::make('id')
+                ->label('ID'),
+            ExportColumn::make('fname'),
+            ExportColumn::make('lname'),
+            ExportColumn::make('mname'),
+            ExportColumn::make('aptitude_score'),
+            ExportColumn::make('interview_score'),
+            ExportColumn::make('total_score'),
+            ExportColumn::make('phone'),
+            ExportColumn::make('batch.batch_name'),
+            ExportColumn::make('status'),
+            ExportColumn::make('address'),
+            ExportColumn::make('date_screened'),
+            ExportColumn::make('remarks'),
+            ExportColumn::make('screened_by'),
+            ExportColumn::make('created_at'),
+            ExportColumn::make('updated_at'),
         ];
     }
 
-    // public function getXlsxWriterOptions(): ?Options
-    // {
-    //     $options = new Options();
-
-    //     $options->setTempFolder(
-    //         storage_path('app/temp')
-    //     );
-
-    //     return $options;
-    // }
-
-    public static function getCompletedNotificationTitle(
-        Export $export
-    ): string {
-        return 'Screening Export Ready';
-    }
-
-    public static function getCompletedNotificationBody(
-        Export $export
-    ): string {
-        $body = 'Your screening export has completed and '
-            . Str::of('row')->counted($export->successful_rows)
-            . ' exported.';
+    public static function getCompletedNotificationBody(Export $export): string
+    {
+        $body = 'Your screening export has completed and ' . Str::of('row')->counted($export->successful_rows) . ' exported.';
 
         if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= ' '
-                . Str::of('row')->counted($failedRowsCount)
-                . ' failed to export.';
+            $body .= ' ' . Str::of('row')->counted($failedRowsCount) . ' failed to export.';
         }
 
         return $body;
     }
+
 
 
 }

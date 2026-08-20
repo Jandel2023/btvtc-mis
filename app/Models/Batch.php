@@ -19,4 +19,9 @@ class Batch extends Model
     {
         return $this->belongsTo(Ntp::class);
     }
+
+    public function screenings()
+    {
+        return $this->hasMany(Screening::class);
+    }
 }

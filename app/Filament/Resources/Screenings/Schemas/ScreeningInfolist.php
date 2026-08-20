@@ -20,13 +20,14 @@ class ScreeningInfolist
                 TextEntry::make('interview_score')
                     ->numeric(),
                 TextEntry::make('total_score')
-                    ->numeric(),
+                    ->numeric()
+                    ->placeholder('-'),
                 TextEntry::make('phone')
                     ->placeholder('-'),
-                TextEntry::make('qualification_id')
+                TextEntry::make('batch_id')
                     ->numeric(),
-                TextEntry::make('scholarship_program'),
-                TextEntry::make('status'),
+                TextEntry::make('status')
+                    ->placeholder('-'),
                 TextEntry::make('address')
                     ->placeholder('-'),
                 TextEntry::make('date_screened')
