@@ -2,13 +2,20 @@
 
 namespace App\Filament\Resources\Screenings\Tables;
 
+use App\Filament\Exports\ScreeningExporter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+
 
 class ScreeningsTable
 {
@@ -16,11 +23,7 @@ class ScreeningsTable
     {
         return $table
             ->columns([
-                TextColumn::make('fname')
-                    ->searchable(),
-                TextColumn::make('lname')
-                    ->searchable(),
-                TextColumn::make('mname')
+                TextColumn::make('full_name')
                     ->searchable(),
                 TextColumn::make('aptitude_score')
                     ->numeric()
@@ -65,7 +68,40 @@ class ScreeningsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options([
+                        'Passed' => 'Passed',
+                        'Failed' => 'Failed',
+                    ]),
+                SelectFilter::make('qualification')
+                    ->relationship('qualification', 'qualification_code')
+                    ->searchable()
+                    ->preload(),
+                Filter::make('date_screened')
+                    ->schema([
+                        DatePicker::make('from'),
+                        DatePicker::make('until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['from'],
+                                fn (Builder $query, string $date): Builder => $query->whereDate('date_screened', '>=', $date),
+                            )
+                            ->when(
+                                $data['until'],
+                                fn (Builder $query, string $date): Builder => $query->whereDate('date_screened', '<=', $date),
+                            );
+                    }),
+            ])
+            ->headerActions([
+                ExportAction::make()
+                    ->label('Export Screening Result')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->exporter(ScreeningExporter::class)
+                    ->formats([
+                        ExportFormat::Xlsx,
+                    ]),
             ])
             ->recordActions([
                 ViewAction::make(),

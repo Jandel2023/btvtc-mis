@@ -20,9 +20,6 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 
-use App\Filament\Pages\Settings;
-use Filament\Actions\Action;
-
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -33,18 +30,19 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->spa()
             ->login()
+            ->databaseNotifications()
             ->brandLogo(asset('images/btvtc-logo.png'))
             ->brandLogoHeight('3rem')
             ->favicon(asset('images/btvtc-logo.ico'))
             ->emailVerification()
             ->emailChangeVerification()
             ->profile()
-            ->registerErrorNotification(    
+            ->registerErrorNotification(
                 title: 'An error occurred',
                 body: 'Please try again later.',
             )
-            // ->hiddenErrorNotification(403)
-            // ->disabledErrorNotification(503)
+            ->hiddenErrorNotification(403)
+            ->disabledErrorNotification(503)
             ->colors([
                 'primary' => Color::Green,
             ])

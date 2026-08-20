@@ -25,7 +25,7 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
             $table->string('scholarship_program');
-            $table->string('status')->default('pending');
+            $table->string('status')->nullable();
             $table->string('address')->nullable();
             $table->date('date_screened')->nullable();
             $table->string('remarks')->nullable();
