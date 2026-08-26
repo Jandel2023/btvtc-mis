@@ -3,12 +3,9 @@
 namespace App\Filament\Resources\ReleaseToolkits\Schemas;
 
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use App\Enums\ScholarshipProgram;
-use Filament\Forms\Components\asSelectArray;
-
 
 class ReleaseToolkitForm
 {
@@ -16,20 +13,24 @@ class ReleaseToolkitForm
     {
         return $schema
             ->components([
-                TextInput::make('first_name')
+                Select::make('batch_id')
+                    ->relationship('batch', 'batch_name')
                     ->required(),
-                TextInput::make('middle_name'),
-                TextInput::make('last_name')
+                Select::make('screening_id')
+                    ->relationship('screening', 'fname')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(implode(' ', array_filter([
+                        $record->fname,
+                        $record->mname,
+                        $record->lname,
+                    ]))))
+                    ->searchable()
+                    ->preload()
                     ->required(),
-                Select::make('qualification_id')
-                    ->relationship('qualifications', 'qualification_code')
+                DatePicker::make('date_recieved')
                     ->required(),
-                TextInput::make('contact_number'),
-                Select::make('scholarship_program')
-                    ->label('Scholarship Program')
-                    ->options(ScholarshipProgram::class)
-                    ->required(),
-                DatePicker::make('date_recieved'),
+                TextInput::make('Notes')
+                    ->label('Notes')
+                    ->nullable(),
             ]);
     }
 }

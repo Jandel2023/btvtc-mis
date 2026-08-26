@@ -11,17 +11,15 @@ class ReleaseToolkitInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('first_name'),
-                TextEntry::make('middle_name')
-                    ->placeholder('-'),
-                TextEntry::make('last_name'),
-                TextEntry::make('qualification_id')
-                    ->numeric(),
-                TextEntry::make('contact_number')
-                    ->placeholder('-'),
-                TextEntry::make('scholarship_program'),
+                TextEntry::make('batch.batch_name')
+                    ->label('Batch'),
+                TextEntry::make('screening.full_name')
+                    ->label('Screening'),
                 TextEntry::make('date_recieved')
                     ->date()
+                    ->placeholder('-'),
+                TextEntry::make('Notes')
+                    ->label('Notes')
                     ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()

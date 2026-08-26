@@ -8,31 +8,37 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class UsersTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+
+            ->modifyQueryUsing(function ($query) {
+                $currentUserId = Auth::id();
+
+                if ($currentUserId !== null) {
+                    $query->whereKeyNot($currentUserId);
+                }
+
+                return $query;
+            })
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('qualification_id')
-                    ->numeric()
+                TextColumn::make('qualification.qualification_code')
                     ->sortable(),
                 TextColumn::make('email')
                     ->label('Email address')
                     ->searchable(),
-                TextColumn::make('email_verified_at')
-                    ->dateTime()
-                    ->sortable(),
                 TextColumn::make('phone')
                     ->searchable(),
                 TextColumn::make('dob')
+                    ->label('Birthdate')
                     ->date()
                     ->sortable(),
-                TextColumn::make('id_number')
-                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

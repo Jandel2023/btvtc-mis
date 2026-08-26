@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Enums\ScholarshipProgram;
-use App\Models\Qualifications;
 use App\Models\Screening;
 use Illuminate\Database\Seeder;
 
@@ -14,9 +12,8 @@ class ScreeningSeeder extends Seeder
      */
     public function run(): void
     {
-        $qualificationIds = Qualifications::query()->pluck('id')->values();
 
-        $screenings = [
+        Screening::insert([
             [
                 'fname' => 'Maria',
                 'lname' => 'Santos',
@@ -25,14 +22,14 @@ class ScreeningSeeder extends Seeder
                 'interview_score' => 88,
                 'total_score' => null,
                 'phone' => '09171234567',
-                
+                'batch_id' => 1,
                 'address' => 'Barangay Poblacion, Baybay City',
                 'date_screened' => now()->subDays(5)->toDateString(),
                 'remarks' => 'Recommended for enrollment.',
-                'screened_by' => 'Administrator',
+                'screened_by' => null,
             ],
-          
-        ];
+
+        ]);
 
         // foreach ($screenings as $index => $screening) {
         //     Screening::query()->create([

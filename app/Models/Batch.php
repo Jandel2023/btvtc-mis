@@ -10,6 +10,10 @@ class Batch extends Model
     //
     protected $guarded = [];
 
+    protected $casts = [
+    'schedule' => 'array',
+    ];
+
     public function qualification()
     {
         return $this->belongsTo(qualifications::class);

@@ -21,28 +21,31 @@ class DatabaseSeeder extends Seeder
             QualificationLevelSeeder::class,
             TrainingSectorSeeder::class,
             QualificationSeeder::class,
+            NtpSeeder::class,
+            BatchSeeder::class,
             ScreeningSeeder::class,
+
         ]);
 
         User::factory()->create([
             'name' => 'jandel',
             'email' => 'jandellopez1997@gmail.com',
             'role' => UserRole::Administrator,
-            'qualification_id' => NULL,
-            ]);
+            'qualification_id' => null,
+        ]);
 
         User::factory()->create([
             'name' => 'Jesse',
             'email' => 'jesse@gmail.com',
             'role' => UserRole::Administrator,
-            'qualification_id' => NULL,
+            'qualification_id' => null,
         ]);
 
         User::factory()->create([
             'name' => 'Harddiff',
             'email' => 'harddiff@gmail.com',
             'role' => UserRole::Registrar,
-            'qualification_id' => NULL,
+            'qualification_id' => null,
         ]);
 
         User::factory()->create([
@@ -66,7 +69,5 @@ class DatabaseSeeder extends Seeder
             'qualification_id' => 4,
         ]);
 
-
-        
     }
 }
