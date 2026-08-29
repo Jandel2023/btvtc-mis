@@ -25,7 +25,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 {
     protected $guarded = [];
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use  Notifiable;
+
+
 
     /**
      * Get the attributes that should be cast.
@@ -41,6 +43,8 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
             'dob' => 'date',
         ];
     }
+
+
 
     public function canAccessPanel(Panel $panel): bool
     {

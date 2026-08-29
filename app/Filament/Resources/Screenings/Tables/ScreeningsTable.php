@@ -21,31 +21,46 @@ class ScreeningsTable
             ->columns([
                 TextColumn::make('full_name')
                     ->searchable(),
-                TextColumn::make('aptitude_score')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('interview_score')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('total_score')
-                    ->numeric()
-                    ->sortable(),
+                // TextColumn::make('aptitude_score')
+                //     ->numeric()
+                //     ->sortable(),
+                // TextColumn::make('interview_score')
+                //     ->numeric()
+                //     ->sortable(),
+                // TextColumn::make('total_score')
+                //     ->numeric()
+                //     ->sortable(),
                 TextColumn::make('status')
                     ->searchable(),
-                TextColumn::make('phone')
-                    ->searchable(),
+                // TextColumn::make('phone')
+                //     ->searchable(),
                 TextColumn::make('batch.batch_name')
                     ->sortable(),
-               
-                TextColumn::make('address')
-                    ->searchable(),
-                TextColumn::make('date_screened')
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('remarks')
-                    ->searchable(),
-                TextColumn::make('screened_by')
-                    ->searchable(),
+                TextColumn::make('enrolled_status')
+                 ->label('Enrollment Status')
+                    ->searchable()
+                    ->sortable()
+                    ->formatStateUsing(fn (?Bool $state): string => match ($state) {
+                        true => 'Enrolled',
+                        false => 'Not Enrolled',
+                      
+                    })
+                    ->badge()
+                    ->color(fn (?Bool $state): string => match ($state) {
+                        true => 'success',
+                        false => 'danger',
+                        default => 'success',
+                    }),
+                  
+                // TextColumn::make('address')
+                //     ->searchable(),
+                // TextColumn::make('date_screened')
+                //     ->date()
+                //     ->sortable(),
+                // TextColumn::make('remarks')
+                //     ->searchable(),
+                // TextColumn::make('screened_by')
+                //     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources\Screenings\Schemas;
 
+use App\Models\Screening;
 use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -81,7 +83,45 @@ class ScreeningForm
                     ->maxLength(11),
                 Select::make('batch_id')
                     ->relationship('Batch', 'batch_name')
-                    ->required(),
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                        if (! $state) {
+                            return;
+                        }
+
+                        $batch = \App\Models\Batch::with('ntp')->find($state);
+
+                        if (! $batch || ! $batch->ntp) {
+                            return;
+                        }
+
+                        $approvedCount = Screening::query()
+                            ->where('enrolled_status', true)
+                            ->whereHas('batch', function ($query) use ($batch) {
+                                $query->where('ntp_id', $batch->ntp_id);
+                            })
+                            ->count();
+
+                        if ($approvedCount >= (int) $batch->ntp->approve_slots) {
+                            $set('enrolled_status', false);
+
+                            Notification::make()
+                                ->warning()
+                                ->title('Batch capacity reached')
+                                ->body('This NTP has reached its approved slot limit. The screening may still be saved, but the batch is already full for enrollment.')
+                                ->send();
+                        } elseif (\App\Models\Trainee::query()
+                            ->where('screening_id', $get('id'))
+                            ->where('enroll_status', true)
+                            ->exists()) {
+                            $set('enrolled_status', true);
+                        } else {
+                            $set('enrolled_status', false);
+                        }
+                            
+                        
+                    }),
 
                 TextInput::make('address'),
                 DatePicker::make('date_screened')
@@ -95,6 +135,13 @@ class ScreeningForm
                     ->searchable()
                     ->preload()
                     ->nullable(),
+                 TextInput::make('enrolled_status')
+                    ->formatStateUsing(fn (?Bool $state): string => match ($state) {
+                        true => 'Enrolled',
+                        false => 'Not Enrolled', 
+                    })
+                    ->live()
+                    ->dehydrated(),
             ]);
     }
 }

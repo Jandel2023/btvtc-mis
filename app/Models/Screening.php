@@ -9,6 +9,21 @@ class Screening extends Model
     //
     protected $guarded = [];
 
+    protected static function booted(): void
+    {
+        static::updated(function (self $screening) {
+            if (! $screening->wasChanged('batch_id') && ! $screening->wasChanged('fname') && ! $screening->wasChanged('mname') && ! $screening->wasChanged('lname') && ! $screening->wasChanged('phone')) {
+                return;
+            }
+
+            $screening->trainees()->update([
+                'name' => $screening->full_name,
+                'batch' => $screening->batch?->batch_name,
+                'phone' => $screening->phone,
+            ]);
+        });
+    }
+
     /**
      * Get the applicant's complete name.
      */
@@ -29,5 +44,10 @@ class Screening extends Model
     public function batch()
     {
         return $this->belongsTo(Batch::class);
+    }
+
+    public function trainees()
+    {
+        return $this->hasMany(Trainee::class);
     }
 }

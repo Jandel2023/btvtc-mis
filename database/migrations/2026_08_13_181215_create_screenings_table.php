@@ -24,7 +24,10 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
-            $table->string('status')->nullable();
+            $table->string('status')->nullable()
+                 ->constrained()
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();;
             $table->string('address')->nullable();
             $table->date('date_screened')->nullable();
             $table->string('remarks')->nullable();
