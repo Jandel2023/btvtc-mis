@@ -22,6 +22,19 @@ class QualificationsResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Settings';
+    }
+    public static function getNavigationIcon(): string
+{
+    return 'heroicon-o-clipboard-document-check';
+}
+
+    public static function getNavigationSort(): ?int
+{
+    return 5; // Lower numbers appear first
+}
     public static function form(Schema $schema): Schema
     {
         return QualificationsForm::configure($schema);

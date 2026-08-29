@@ -17,11 +17,22 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use App\Enums\UserRole;
 
+
 class ReleaseToolkitResource extends Resource
 {
     protected static ?string $model = ReleaseToolkit::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+   
+//       public static function getNavigationIcon(): string
+// {
+//     return ' heroicon-o-inbox-stack';
+// }
+        public static function getNavigationSort(): ?int
+{
+    return 4; // Lower numbers appear first
+}
 
     public static function form(Schema $schema): Schema
     {

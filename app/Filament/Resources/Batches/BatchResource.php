@@ -23,7 +23,15 @@ class BatchResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-   
+public static function getNavigationIcon(): string
+{
+    return 'heroicon-o-squares-2x2'; //
+}
+
+      public static function getNavigationSort(): ?int
+{
+    return 2; // Lower numbers appear first
+}
     public static function form(Schema $schema): Schema
     {
         return BatchForm::configure($schema);

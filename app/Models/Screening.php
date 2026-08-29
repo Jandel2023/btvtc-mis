@@ -16,11 +16,6 @@ class Screening extends Model
                 return;
             }
 
-            $screening->trainees()->update([
-                'name' => $screening->full_name,
-                'batch' => $screening->batch?->batch_name,
-                'phone' => $screening->phone,
-            ]);
         });
     }
 
@@ -46,8 +41,5 @@ class Screening extends Model
         return $this->belongsTo(Batch::class);
     }
 
-    public function trainees()
-    {
-        return $this->hasMany(Trainee::class);
-    }
+  
 }

@@ -3,10 +3,13 @@
 namespace App\Filament\Resources\Screenings\Tables;
 
 use App\Filament\Exports\ScreeningExporter;
+use App\Models\Screening;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Actions\ExportAction;
@@ -27,9 +30,9 @@ class ScreeningsTable
                 // TextColumn::make('interview_score')
                 //     ->numeric()
                 //     ->sortable(),
-                // TextColumn::make('total_score')
-                //     ->numeric()
-                //     ->sortable(),
+                TextColumn::make('total_score')
+                    ->numeric()
+                    ->sortable(),
                 TextColumn::make('status')
                     ->searchable(),
                 // TextColumn::make('phone')
@@ -51,6 +54,7 @@ class ScreeningsTable
                         false => 'danger',
                         default => 'success',
                     }),
+
                   
                 // TextColumn::make('address')
                 //     ->searchable(),
@@ -85,7 +89,54 @@ class ScreeningsTable
             ])
 
             ->recordActions([
-                ViewAction::make(),
+                // ViewAction::make(),
+                Action::make('enroll')
+                    ->label('Enroll')
+                    ->icon('heroicon-m-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Confirm Enrollment')
+                    ->modalDescription('Are you sure you want to enroll this trainee?')
+                    ->modalSubmitActionLabel('Enroll')
+                    ->visible(fn (Screening $record): bool => ! $record->enrolled_status)
+                    ->action(function (Screening $record) {
+                        $batch = $record->batch;
+
+                        if (! $batch || ! $batch->ntp) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Error')
+                                ->body('Batch or NTP information is missing.')
+                                ->send();
+
+                            return;
+                        }
+
+                        $enrolledCount = Screening::query()
+                            ->where('enrolled_status', true)
+                            ->whereHas('batch', function ($query) use ($batch) {
+                                $query->where('ntp_id', $batch->ntp_id);
+                            })
+                            ->count();
+
+                        if ($enrolledCount >= (int) $batch->ntp->approve_slots) {
+                            Notification::make()
+                                ->warning()
+                                ->title('Batch Capacity Reached')
+                                ->body("This NTP has reached its approved slot limit ({$batch->ntp->approve_slots}).")
+                                ->send();
+
+                            return;
+                        }
+
+                        $record->update(['enrolled_status' => true]);
+
+                        Notification::make()
+                            ->success()
+                            ->title('Success')
+                            ->body('Trainee enrolled successfully.')
+                            ->send();
+                    }),
                 EditAction::make(),
             ])
             ->toolbarActions([

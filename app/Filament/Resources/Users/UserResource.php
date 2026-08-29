@@ -23,6 +23,21 @@ class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+ public static function getNavigationGroup(): ?string
+    {
+        return 'Settings';
+    }
+    public static function getNavigationIcon(): string
+{
+    return 'heroicon-o-users';// Example: outline user icon
+}
+
+
+    public static function getNavigationSort(): ?int
+{
+    return 6; // Lower numbers appear first
+}
+
     public static function form(Schema $schema): Schema
     {
         return UserForm::configure($schema);

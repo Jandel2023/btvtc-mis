@@ -22,6 +22,20 @@ class NtpResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+     public static function getNavigationGroup(): ?string
+    {
+        return 'Settings';
+    }
+    public static function getNavigationSort(): ?int
+{
+    return 1; // Lower numbers appear first
+}
+public static function getNavigationIcon(): string
+{
+    return 'heroicon-o-document'; // Outline user icon
+}
+
+
     public static function form(Schema $schema): Schema
     {
         return NtpForm::configure($schema);

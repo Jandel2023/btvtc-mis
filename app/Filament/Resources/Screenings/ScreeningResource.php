@@ -22,6 +22,12 @@ class ScreeningResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+ 
+        public static function getNavigationSort(): ?int
+{
+    return 3; // Lower numbers appear first
+}
+
     public static function form(Schema $schema): Schema
     {
         return ScreeningForm::configure($schema);

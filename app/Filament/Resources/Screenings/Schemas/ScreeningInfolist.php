@@ -24,8 +24,8 @@ class ScreeningInfolist
                     ->placeholder('-'),
                 TextEntry::make('phone')
                     ->placeholder('-'),
-                TextEntry::make('batch_id')
-                    ->numeric(),
+                TextEntry::make('batch.batch_name')
+                    ->placeholder('-'),
                 TextEntry::make('status')
                     ->placeholder('-'),
                 TextEntry::make('address')

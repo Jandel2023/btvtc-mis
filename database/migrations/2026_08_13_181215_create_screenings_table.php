@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('screenings', function (Blueprint $table) {
+        // data for screening
             $table->id();
             $table->string('fname');
             $table->string('lname');
@@ -27,11 +28,22 @@ return new class extends Migration
             $table->string('status')->nullable()
                  ->constrained()
                 ->cascadeOnUpdate()
-                ->restrictOnDelete();;
+                ->restrictOnDelete();
+            $table->boolean('enrolled_status')->default(false)->nullable();
             $table->string('address')->nullable();
             $table->date('date_screened')->nullable();
-            $table->string('remarks')->nullable();
             $table->string('screened_by')->nullable();
+        // data for trainees
+             $table->string('email')->nullable();
+            $table->string('id_status')->default('Active');
+            $table->string('qr_code')->nullable();
+            $table->date('dob')->nullable();
+            $table->string('gender')->nullable();
+            $table->string('picture')->nullable();
+            $table->string('remarks')->nullable();
+            $table->string('requirements')->nullable();
+            $table->date('date_enrolled')->nullable();
+
             $table->timestamps();
         });
     }
