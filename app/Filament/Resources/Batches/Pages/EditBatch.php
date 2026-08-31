@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Batches\Pages;
 use App\Filament\Resources\Batches\BatchResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
+use Filament\Actions\ListAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditBatch extends EditRecord
@@ -17,5 +18,10 @@ class EditBatch extends EditRecord
             ViewAction::make(),
             DeleteAction::make(),
         ];
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
     }
 }

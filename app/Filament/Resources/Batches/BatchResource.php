@@ -59,7 +59,7 @@ public static function getNavigationIcon(): string
         return [
             'index' => ListBatches::route('/'),
             'create' => CreateBatch::route('/create'),
-            'view' => ViewBatch::route('/{record}'),
+            // 'view' => ViewBatch::route('/{record}'),
             'edit' => EditBatch::route('/{record}/edit'),
         ];
     }

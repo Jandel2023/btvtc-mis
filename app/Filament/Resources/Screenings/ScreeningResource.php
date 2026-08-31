@@ -22,7 +22,7 @@ class ScreeningResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
- 
+
         public static function getNavigationSort(): ?int
 {
     return 3; // Lower numbers appear first
@@ -53,10 +53,10 @@ class ScreeningResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListScreenings::route('/'),
-            'create' => CreateScreening::route('/create'),
-            'view' => ViewScreening::route('/{record}'),
-            'edit' => EditScreening::route('/{record}/edit'),
+            'index' => ListScreenings::route(''),
+            'create' => CreateScreening::route('create'),
+            // 'view' => ViewScreening::route('{record}'),
+            'edit' => EditScreening::route('{record}/edit'),
         ];
     }
 }
