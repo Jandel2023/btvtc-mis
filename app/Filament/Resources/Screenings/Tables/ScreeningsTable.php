@@ -106,16 +106,18 @@ class ScreeningsTable
             ->recordActions([
 
                 // ENROLL
-                Action::make('enroll')
-                    ->label('Enroll')
-                    ->icon('heroicon-m-check-circle')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->modalHeading('Confirm Enrollment')
-                    ->modalDescription(
-                        'Are you sure you want to enroll this trainee?'
-                    )
-                    ->modalSubmitActionLabel('Enroll')
+             Action::make('enroll')
+    ->label('Enroll')
+    ->icon('heroicon-m-check-circle')
+    ->color('success')
+    ->button()
+    ->size('sm')
+    ->requiresConfirmation()
+    ->modalHeading('Confirm Enrollment')
+    ->modalDescription(
+        'Are you sure you want to enroll this trainee?'
+    )
+    ->modalSubmitActionLabel('Enroll')
 
                   ->visible(
                     fn (Screening $record): bool =>
@@ -185,7 +187,7 @@ class ScreeningsTable
                     }),
 
                 // EDIT
-                EditAction::make(),
+                // EditAction::make(),
             ])
 
             // BULK ACTIONS
