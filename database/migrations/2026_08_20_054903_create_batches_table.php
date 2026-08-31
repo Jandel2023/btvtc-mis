@@ -15,17 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('batch_code')->unique();
 
-            $table->foreignId('ntp_id')
-                  ->nullable()
-                    ->constrained()
-                    ->cascadeOnUpdate()
-                    ->restrictOnDelete();
+            $table->unsignedBigInteger('ntp_id')->nullable();
 
-            $table->foreignId('qualification_id')
-                ->constrained('qualifications')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
-            
+            $table->unsignedBigInteger('qualification_id')->nullable();
+
             $table->string('scholarship_program')->nullable();
             $table->string('batch_name');
             $table->date('start_date');
