@@ -11,6 +11,8 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -106,166 +108,173 @@ class BatchForm
     {
         return $schema
             ->components([
+                Section::make('Batch Details')
+                    ->description('Link the batch to its approved training plan and identify the program.')
+                    ->schema([
+                        Grid::make(2)->schema([
+                            Select::make('ntp_id')
+                                ->label('RQM Code')
+                                ->nullable()
+                                ->default(null)
+                                ->disabledOn('edit')
+                                ->relationship(
+                                    'ntp',
+                                    'rqm_code',
+                                    modifyQueryUsing: function ($query, Get $get) {
+                                        $currentNtpId = $get('ntp_id');
 
-            Select::make('ntp_id')
-                ->label('RQM CODE')
-                ->nullable()
-                ->default(null)
-                ->disabledOn('edit')
+                                        $query->where(function ($query) use ($currentNtpId) {
+                                            $query->whereNotIn(
+                                                'id',
+                                                Batch::query()
+                                                    ->whereNotNull('ntp_id')
+                                                    ->pluck('ntp_id')
+                                            );
 
-                ->relationship(
-                    'ntp',
-                    'rqm_code',
-                    modifyQueryUsing: function ($query, Get $get) {
-                        $currentNtpId = $get('ntp_id');
+                                            if ($currentNtpId) {
+                                                $query->orWhere('id', $currentNtpId);
+                                            }
+                                        });
+                                    }
+                                )
+                                ->live()
+                                ->columnSpan(1)
+                                ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                    if (! $state) {
+                                        $set('qualification_id', null);
+                                        $set('scholarship_program', null);
+                                        $set('batch_code', null);
 
-                        $query->where(function ($query) use ($currentNtpId) {
-                            $query->whereNotIn(
-                                'id',
-                                \App\Models\Batch::query()
-                                    ->whereNotNull('ntp_id')
-                                    ->pluck('ntp_id')
-                            );
+                                        return;
+                                    }
 
-                            if ($currentNtpId) {
-                                $query->orWhere('id', $currentNtpId);
-                            }
-                        });
-                    }
-                )
-                
-                ->live()
-                ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                    $ntp = Ntp::find($state);
 
-                    if (! $state) {
-                        $set('qualification_id', null);
-                        $set('scholarship_program', null);
-                        $set('batch_code', null);
+                                    if ($ntp) {
+                                        $set('qualification_id', $ntp->qualification_id);
+                                        $set('scholarship_program', $ntp->scholarship_program);
+                                        $set(
+                                            'batch_code',
+                                            self::generateBatchCode(
+                                                $ntp->qualification_id,
+                                                $get('scholarship_program')
+                                            )
+                                        );
+                                    }
+                                }),
+                            TextInput::make('batch_name')
+                                ->label('Batch Name')
+                                ->required()
+                                ->columnSpan(1),
+                            Select::make('qualification_id')
+                                ->relationship(
+                                    'qualification',
+                                    'qualification_code',
+                                    fn ($query) => $query->where('is_active', true),
+                                )
+                                ->disabledOn('edit')
+                                ->required()
+                                ->live()
+                                ->dehydrated()
+                                ->columnSpan(1)
+                                ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                    $set(
+                                        'batch_code',
+                                        self::generateBatchCode(
+                                            $state,
+                                            $get('scholarship_program')
+                                        )
+                                    );
 
-                        return;
-                    }
+                                }),
+                            Select::make('scholarship_program')
+                                ->label('Scholarship Program')
+                                ->options(ScholarshipProgram::class)
+                                ->disabledOn('edit')
+                                ->required()
+                                ->live()
+                                ->columnSpan(1)
+                                ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                    $set(
+                                        'batch_code',
+                                        self::generateBatchCode(
+                                            $get('qualification_id'),
+                                            $state
+                                        )
+                                    );
+                                    $set('end_date', self::calculateEndDate(
+                                        $get('qualification_id'),
+                                        $get('start_date'),
+                                        $get('schedule')
+                                    ));
+                                }),
+                            TextInput::make('batch_code')
+                                ->hidden()
+                                ->dehydrated(),
+                        ]),
+                    ]),
 
-                    $ntp = \App\Models\Ntp::find($state);
+                Section::make('Schedule & Delivery')
+                    ->description('Set the training days, dates, location, and operational status.')
+                    ->schema([
+                        Grid::make(2)->schema([
+                            CheckboxList::make('schedule')
+                                ->label('Training Days')
+                                ->options(ScheduleType::class)
+                                ->columns(3)
+                                ->required()
+                                ->live()
+                                ->columnSpanFull()
+                                ->afterStateUpdated(function (Get $get, Set $set) {
+                                    $set('end_date', static::calculateEndDate(
+                                        $get('qualification_id'),
+                                        $get('start_date'),
+                                        $get('schedule'),
+                                    ));
+                                }),
+                            DatePicker::make('start_date')
+                                ->label('Start Date')
+                                ->required()
+                                ->live()
+                                ->columnSpan(1)
+                                ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                    $set('end_date', static::calculateEndDate(
+                                        $get('qualification_id'),
+                                        $get('start_date'),
+                                        $get('schedule'),
+                                    ));
 
-                    if ($ntp) {
-                        // Automatically select the qualification
-                        $set('qualification_id', $ntp->qualification_id);
-                        // Automatically select the scholarship program
-                        $set('scholarship_program', $ntp->scholarship_program);
-                        // Generate batch code
-                        $set(
-                            'batch_code',
-                            self::generateBatchCode(
-                                $ntp->qualification_id,
-                                $get('scholarship_program')
-                            )
-                        );
-                    }
-                }),
+                                    if ($state && Carbon::parse($state)->isBefore(Carbon::today())) {
+                                        $set('status', Status::Ongoing->value);
+                                    } else {
+                                        $set('status', Status::Upcoming->value);
+                                    }
+                                }),
+                            DatePicker::make('end_date')
+                                ->label('End Date')
+                                ->native(false)
+                                ->disabled()
+                                ->dehydrated()
+                                ->columnSpan(1),
+                            TextInput::make('venue')
+                                ->label('Training Venue')
+                                ->default('Baybay Technical Vocational Training Center')
+                                ->columnSpan(1),
+                            Select::make('status')
+                                ->options(Status::class)
+                                ->required()
+                                ->columnSpan(1),
+                        ]),
+                    ]),
 
-            TextInput::make('batch_name')
-                ->required(),
-
-            Select::make('qualification_id')
-                ->relationship(
-                    'qualification',
-                    'qualification_code',
-                    fn($query) => $query->where('is_active', true),
-                )
-                ->disabledOn('edit')
-                ->required()
-                ->live()
-                ->dehydrated()
-                ->afterStateUpdated(function (
-                    $state,
-                    Set $set,
-                    Get $get
-                ) {
-                    $set(
-                        'batch_code',
-                        self::generateBatchCode(
-                            $state,
-                            $get('scholarship_program')
-                        ),
-                        'end_date', static::calculateEndDate(
-                            $get('qualification_id'),
-                            $get('start_date'),
-                            $get('schedule'),
-                   
-                    ));
-                }),
-
-            Select::make('scholarship_program')
-                ->label('Scholarship Program')
-                ->options(ScholarshipProgram::class)
-                ->disabledOn('edit')
-                ->required()
-                ->live()
-                ->afterStateUpdated(function ($state, Set $set, Get $get) {
-                    $set(
-                        'batch_code',
-                        self::generateBatchCode(
-                            $get('qualification_id'),
-                            $state
-                        )
-                    );
-                    $set('end_date', self::calculateEndDate(
-                        $get('qualification_id'),
-                        $get('start_date'),
-                        $get('schedule')
-                    ));
-                }),
-                TextInput::make('batch_code')
-                    ->hidden()
-                    ->dehydrated(),
-
-          CheckboxList::make('schedule')
-                    ->label('Is Scheduled')
-                    ->options(ScheduleType::class)
-                    ->columns(3)
-                    ->required()
-                    ->live()
-                    ->afterStateUpdated(function (Get $get, Set $set) {
-                        $set('end_date', static::calculateEndDate(
-                            $get('qualification_id'),
-                            $get('start_date'),
-                            $get('schedule'),
-                        ));
-                    }),
-
-                DatePicker::make('start_date')
-                    ->required()
-                    ->live()
-                    ->afterStateUpdated(function ($state, Set $set, Get $get) {
-                        $set('end_date', static::calculateEndDate(
-                            $get('qualification_id'),
-                            $get('start_date'),
-                            $get('schedule'),
-                        ));
-
-                        if ($state && Carbon::parse($state)->isBefore(Carbon::today())) {
-                            $set('status', Status::Ongoing->value);
-                        } else {
-                            $set('status', Status::Upcoming->value);
-                        }
-                    }),
-
-                
-                DatePicker::make('end_date')
-                   ->label('End date')
-                ->native(false)
-                ->disabled() // auto-calculated, prevent manual edits
-                ->dehydrated(), // still saves the value even though disabled
-              
-                TextInput::make('venue')
-                    ->label('Training Venue')
-                    ->default('Baybay Technical Vocational Training Center'),
-                Select::make('status')
-                    ->options(Status::class)
-                    ->required(),
-                Textarea::make('remarks')
-                    ->default('No remarks')
-                    ->columnSpanFull(),
+                Section::make('Additional Notes')
+                    ->description('Record any information that coordinators should know about this batch.')
+                    ->schema([
+                        Textarea::make('remarks')
+                            ->default('No remarks')
+                            ->rows(4)
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 }

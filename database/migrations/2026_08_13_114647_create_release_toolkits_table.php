@@ -14,15 +14,9 @@ return new class extends Migration
         Schema::create('release_toolkits', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('batch_id')
-                ->constrained()
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
+            $table->unsignedBigInteger('batch_id');
 
-            $table->foreignId('screening_id')
-                ->constrained()
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
+            $table->unsignedBigInteger('screening_id');
 
             $table->date('date_recieved')->default(now());
 

@@ -21,14 +21,8 @@ return new class extends Migration
             $table->integer('interview_score');
             $table->integer('total_score')->nullable();
             $table->string('phone')->nullable();
-            $table->foreignId('batch_id')
-                ->constrained()
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
-            $table->string('status')->nullable()
-                 ->constrained()
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
+            $table->unsignedBigInteger('batch_id');
+            $table->string('status')->nullable();
             $table->boolean('enrolled_status')->default(false)->nullable();
             $table->string('address')->nullable();
             $table->date('date_screened')->nullable();

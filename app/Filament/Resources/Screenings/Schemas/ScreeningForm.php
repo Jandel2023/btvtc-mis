@@ -2,7 +2,8 @@
 
 namespace App\Filament\Resources\Screenings\Schemas;
 
-use App\Filament\Resources\Screenings\Pages\EditScreening;
+use Closure;
+
 use App\Models\Screening;
 use App\Models\User;
 use Filament\Forms\Components\DatePicker;
@@ -12,11 +13,12 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Actions\Action;
+
+
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -33,13 +35,66 @@ class ScreeningForm
                             TextInput::make('fname')
                                 ->label('First Name')
                                 ->required()
+                                ->dehydrateStateUsing(
+                                    fn (?string $state): ?string => $state === null ? null : Str::upper($state)
+                                )
                                 ->columnSpan(1),
                             TextInput::make('mname')
                                 ->label('Middle Name')
+                                ->dehydrateStateUsing(
+                                    fn (?string $state): ?string => $state === null ? null : Str::upper($state)
+                                )
                                 ->columnSpan(1),
                             TextInput::make('lname')
                                 ->label('Last Name')
                                 ->required()
+                                ->dehydrateStateUsing(
+                                    fn (?string $state): ?string => $state === null ? null : Str::upper($state)
+                                )
+                                ->rules([
+                                    fn (Get $get, ?Screening $record): Closure => function (
+                                        string $attribute,
+                                        mixed $value,
+                                        Closure $fail,
+                                    ) use ($get, $record): void {
+                                        $batchId = $get('batch_id');
+                                        $firstName = $get('fname');
+                                        $middleName = $get('mname');
+
+
+                                        if (! $batchId || ! $firstName || ! $value) {
+                                            return;
+                                        }
+
+                                        $duplicateScreeningExists = Screening::query()
+                                            ->where('batch_id', $batchId)
+                                            ->whereRaw('UPPER(fname) = ?', [Str::upper($firstName)])
+                                            ->whereRaw('UPPER(lname) = ?', [Str::upper($value)])
+                                            ->when(
+                                                filled($middleName),
+                                                fn ($query) => $query->whereRaw(
+                                                    'UPPER(mname) = ?',
+                                                    [Str::upper($middleName)]
+                                                ),
+                                                fn ($query) => $query->where(
+                                                    fn ($query) => $query
+                                                        ->whereNull('mname')
+                                                        ->orWhere('mname', '')
+                                                ),
+                                            )
+                                            ->when(
+                                                $record,
+                                                fn ($query) => $query->whereKeyNot($record->getKey()),
+                                            )
+                                            ->exists();
+
+                                        if ($duplicateScreeningExists) {
+                                            $fail('A trainee with this full name is already registered in the selected batch.');
+                                        }
+
+
+                                    },
+                                ])
                                 ->columnSpan(1),
                             TextInput::make('phone')
                                 ->label('Phone Number')
@@ -120,6 +175,8 @@ class ScreeningForm
                                 ->live()
                                 ->columnSpan(1)
                                 ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                    $set('enrolled_status', false);
+
                                     if (! $state) {
                                         return;
                                     }
@@ -130,10 +187,12 @@ class ScreeningForm
                                         return;
                                     }
 
+                                    $batchNtpId = $batch->getAttribute('ntp_id');
+
                                     $approvedCount = Screening::query()
                                         ->where('enrolled_status', true)
-                                        ->whereHas('batch', function ($query) use ($batch) {
-                                            $query->where('ntp_id', $batch->ntp_id);
+                                        ->whereHas('batch', function ($query) use ($batchNtpId) {
+                                            $query->where('ntp_id', $batchNtpId);
                                         })
                                         ->count();
 
@@ -187,10 +246,20 @@ class ScreeningForm
                             ->inline()
                             ->dehydrated()
                             ->columnSpanFull()
+                             ->disabled(function (Get $get): bool {
+                                return $get('status') !== 'Passed';
+                            })
+                            ->dehydrateStateUsing(function ($state, Get $get) {
+                                return $get('status') === 'Passed'
+                                    ? $state
+                                    : false;
+                            })
                             ->afterStateUpdated(function ($state, Set $set, Get $get, ?Screening $record) {
                                 // Only allow enrollment (true), not un-enrollment
+                                if ($record?->exists ?? false) {
                                 if ($state === true && ! $record?->enrolled_status) {
                                     $batchId = $get('batch_id');
+
                                     if (! $batchId) {
                                         Notification::make()
                                             ->danger()
@@ -202,7 +271,20 @@ class ScreeningForm
                                         return;
                                     }
 
+                                    // if ($record->status === "Failed"){
+    
+                                    //       Notification::make()
+                                    //         ->danger()
+                                    //         ->title('Error')
+                                    //         ->body('The screening status is "FAILED" cannot be enrolled.')
+                                    //         ->send();
+                                    //     $set('enrolled_status', false);
+
+                                    //     return;
+                                    // }
+
                                     $batch = \App\Models\Batch::with('ntp')->find($batchId);
+
 
                                     if (! $batch || ! $batch->ntp) {
                                         Notification::make()
@@ -233,13 +315,18 @@ class ScreeningForm
                                         return;
                                     }
 
+
                                     Notification::make()
                                         ->success()
                                         ->title('Success')
                                         ->body('Trainee enrolled successfully.')
                                         ->send();
+
                                 }
-                            }),
+                                }
+
+
+                            })
                     ]),
             ]);
     }

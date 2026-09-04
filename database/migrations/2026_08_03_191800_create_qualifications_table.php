@@ -18,15 +18,9 @@ return new class extends Migration
 
             $table->string('qualification_title');
 
-            $table->foreignId('qualification_level_id')
-                ->constrained()
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
+            $table->unsignedBigInteger('qualification_level_id');
 
-            $table->foreignId('training_sector_id')
-                ->constrained()
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
+            $table->unsignedBigInteger('training_sector_id');
 
             $table->integer('training_hours');
 

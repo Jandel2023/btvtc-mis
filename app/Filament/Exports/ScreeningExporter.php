@@ -15,37 +15,100 @@ class ScreeningExporter extends Exporter
     public static function getColumns(): array
     {
         return [
+
+            // =====================================================
+            // APPLICANT INFORMATION
+            // =====================================================
+
             ExportColumn::make('id')
                 ->label('ID'),
-            ExportColumn::make('fname'),
-            ExportColumn::make('lname'),
-            ExportColumn::make('mname'),
-            ExportColumn::make('aptitude_score'),
-            ExportColumn::make('interview_score'),
-            ExportColumn::make('total_score'),
-            ExportColumn::make('phone'),
-            ExportColumn::make('batch.batch_name'),
-            ExportColumn::make('status'),
-            ExportColumn::make('address'),
-            ExportColumn::make('date_screened'),
-            ExportColumn::make('remarks'),
-            ExportColumn::make('screened_by'),
-            ExportColumn::make('created_at'),
-            ExportColumn::make('updated_at'),
+
+            ExportColumn::make('fname')
+                ->label('First Name'),
+
+            ExportColumn::make('mname')
+                ->label('Middle Name'),
+
+            ExportColumn::make('lname')
+                ->label('Last Name'),
+
+            ExportColumn::make('phone')
+                ->label('Contact Number'),
+
+            ExportColumn::make('address')
+                ->label('Address'),
+
+
+            // =====================================================
+            // SCREENING RESULTS
+            // =====================================================
+
+            ExportColumn::make('aptitude_score')
+                ->label('Aptitude Score'),
+
+            ExportColumn::make('interview_score')
+                ->label('Interview Score'),
+
+            ExportColumn::make('total_score')
+                ->label('Total Score'),
+
+            ExportColumn::make('status')
+                ->label('Screening Status'),
+            ExportColumn::make('enrolled_status')
+                ->label('Enrollment Status')
+                ->formatStateUsing(fn ($state): string => $state
+                    ? 'Enrolled'
+                    : 'Not Enrolled'
+                ),
+
+
+            // =====================================================
+            // TRAINING / BATCH INFORMATION
+            // =====================================================
+
+            ExportColumn::make('batch.batch_name')
+                ->label('Batch'),
+
+
+            // =====================================================
+            // SCREENING DETAILS
+            // =====================================================
+
+            ExportColumn::make('date_screened')
+                ->label('Date Screened'),
+
+            ExportColumn::make('screened_by')
+                ->label('Screened By'),
+
+            ExportColumn::make('remarks')
+                ->label('Remarks'),
+
+
+            // =====================================================
+            // SYSTEM INFORMATION
+            // =====================================================
+
+            ExportColumn::make('created_at')
+                ->label('Date Created'),
+
+            ExportColumn::make('updated_at')
+                ->label('Last Updated'),
         ];
     }
 
     public static function getCompletedNotificationBody(Export $export): string
     {
-        $body = 'Your screening export has completed and ' . Str::of('row')->counted($export->successful_rows) . ' exported.';
+        $body = 'Screening export completed successfully. '
+            . Str::of('row')->counted($export->successful_rows)
+            . ' exported.';
 
         if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= ' ' . Str::of('row')->counted($failedRowsCount) . ' failed to export.';
+            $body .= ' '
+                . Str::of('row')->counted($failedRowsCount)
+                . ' failed to export.';
         }
 
         return $body;
     }
-
-
-
 }
+
