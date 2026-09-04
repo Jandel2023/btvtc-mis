@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ListUsers;
@@ -15,7 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use App\Filament\Resources\Users\Tables;
+use Illuminate\Support\Facades\Auth;
 
 class UserResource extends Resource
 {
@@ -23,20 +24,31 @@ class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
- public static function getNavigationGroup(): ?string
+    public static function canViewAny(): bool
+    {
+        // use App\Enums\UserRole;
+        // use Illuminate\Support\Facades\Auth;
+        $user = Auth::user();
+
+        return $user !== null
+            && method_exists($user, 'hasRole')
+            && (call_user_func([$user, 'hasRole'], UserRole::SuperAdmin));
+    }
+
+    public static function getNavigationGroup(): ?string
     {
         return 'Settings';
     }
-    public static function getNavigationIcon(): string
-{
-    return 'heroicon-o-users';// Example: outline user icon
-}
 
+    public static function getNavigationIcon(): string
+    {
+        return 'heroicon-o-users'; // Example: outline user icon
+    }
 
     public static function getNavigationSort(): ?int
-{
-    return 6; // Lower numbers appear first
-}
+    {
+        return 6; // Lower numbers appear first
+    }
 
     public static function form(Schema $schema): Schema
     {

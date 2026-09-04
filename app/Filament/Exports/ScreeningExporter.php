@@ -38,7 +38,6 @@ class ScreeningExporter extends Exporter
             ExportColumn::make('address')
                 ->label('Address'),
 
-
             // =====================================================
             // SCREENING RESULTS
             // =====================================================
@@ -61,14 +60,12 @@ class ScreeningExporter extends Exporter
                     : 'Not Enrolled'
                 ),
 
-
             // =====================================================
             // TRAINING / BATCH INFORMATION
             // =====================================================
 
             ExportColumn::make('batch.batch_name')
                 ->label('Batch'),
-
 
             // =====================================================
             // SCREENING DETAILS
@@ -82,7 +79,6 @@ class ScreeningExporter extends Exporter
 
             ExportColumn::make('remarks')
                 ->label('Remarks'),
-
 
             // =====================================================
             // SYSTEM INFORMATION
@@ -98,17 +94,16 @@ class ScreeningExporter extends Exporter
 
     public static function getCompletedNotificationBody(Export $export): string
     {
-        $body = 'Screening export completed successfully. '
-            . Str::of('row')->counted($export->successful_rows)
-            . ' exported.';
+        $body = 'Trainee export completed successfully. '
+            .Str::of('row')->counted($export->successful_rows)
+            .' exported.';
 
         if ($failedRowsCount = $export->getFailedRowsCount()) {
             $body .= ' '
-                . Str::of('row')->counted($failedRowsCount)
-                . ' failed to export.';
+                .Str::of('row')->counted($failedRowsCount)
+                .' failed to export.';
         }
 
         return $body;
     }
 }
-

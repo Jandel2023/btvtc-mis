@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Qualifications;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\Qualifications\Pages\CreateQualifications;
 use App\Filament\Resources\Qualifications\Pages\EditQualifications;
 use App\Filament\Resources\Qualifications\Pages\ListQualifications;
@@ -15,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class QualificationsResource extends Resource
 {
@@ -22,19 +24,32 @@ class QualificationsResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function canViewAny(): bool
+    {
+        // use App\Enums\UserRole;
+        // use Illuminate\Support\Facades\Auth;
+        $user = Auth::user();
+
+        return $user !== null
+            && method_exists($user, 'hasRole')
+            && (call_user_func([$user, 'hasRole'], UserRole::Administrator) || call_user_func([$user, 'hasRole'], UserRole::SuperAdmin));
+    }
+
     public static function getNavigationGroup(): ?string
     {
         return 'Settings';
     }
+
     public static function getNavigationIcon(): string
-{
-    return 'heroicon-o-clipboard-document-check';
-}
+    {
+        return 'heroicon-o-clipboard-document-check';
+    }
 
     public static function getNavigationSort(): ?int
-{
-    return 5; // Lower numbers appear first
-}
+    {
+        return 5; // Lower numbers appear first
+    }
+
     public static function form(Schema $schema): Schema
     {
         return QualificationsForm::configure($schema);

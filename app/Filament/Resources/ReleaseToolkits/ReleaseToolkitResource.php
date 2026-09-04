@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ReleaseToolkits;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\ReleaseToolkits\Pages\CreateReleaseToolkit;
 use App\Filament\Resources\ReleaseToolkits\Pages\EditReleaseToolkit;
 use App\Filament\Resources\ReleaseToolkits\Pages\ListReleaseToolkits;
@@ -15,8 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use App\Enums\UserRole;
-
+use Illuminate\Support\Facades\Auth;
 
 class ReleaseToolkitResource extends Resource
 {
@@ -24,15 +24,14 @@ class ReleaseToolkitResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-   
-//       public static function getNavigationIcon(): string
-// {
-//     return ' heroicon-o-inbox-stack';
-// }
-        public static function getNavigationSort(): ?int
-{
-    return 4; // Lower numbers appear first
-}
+    //       public static function getNavigationIcon(): string
+    // {
+    //     return ' heroicon-o-inbox-stack';
+    // }
+    public static function getNavigationSort(): ?int
+    {
+        return 4; // Lower numbers appear first
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -51,7 +50,12 @@ class ReleaseToolkitResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->hasRole(UserRole::Administrator) || auth()->user()->hasRole(UserRole::Trainer);
+        $user = Auth::user();
+
+        return $user !== null
+            && method_exists($user, 'hasRole')
+            && (call_user_func([$user, 'hasRole'], UserRole::Administrator)
+                || call_user_func([$user, 'hasRole'], UserRole::Trainer) || call_user_func([$user, 'hasRole'], UserRole::SuperAdmin));
     }
 
     public static function getRelations(): array

@@ -29,11 +29,14 @@ class UsersTable
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('qualification.qualification_code')
+                    ->copyable()
                     ->sortable(),
                 TextColumn::make('email')
                     ->label('Email address')
+                    ->copyable()
                     ->searchable(),
                 TextColumn::make('phone')
+                    ->copyable()
                     ->searchable(),
                 TextColumn::make('dob')
                     ->label('Birthdate')

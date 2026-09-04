@@ -17,29 +17,33 @@ class QualificationsTable
         return $table
             ->columns([
                 TextColumn::make('qualification_code')
+                    ->copyable()
                     ->searchable(),
                 TextColumn::make('qualification_title')
+                    ->copyable()
                     ->searchable(),
-            TextColumn::make('qualificationLevel.code')
-                ->label('Qualification Level')
-                ->sortable()
-                ->searchable(),
-            TextColumn::make('trainingSector.sector_name')
-                ->label('Training Sector')
-                ->sortable()
-                ->searchable(),
-            TextColumn::make('training_hours')
-                ->label('Training Hours')
-                ->formatStateUsing(function ($state) {
-                    if (! $state) {
-                        return '-';
-                    }
+                TextColumn::make('qualificationLevel.code')
+                    ->label('Qualification Level')
+                    ->copyable()
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('trainingSector.sector_name')
+                    ->label('Training Sector')
+                    ->copyable()
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('training_hours')
+                    ->label('Training Hours')
+                    ->formatStateUsing(function ($state) {
+                        if (! $state) {
+                            return '-';
+                        }
 
-                    $days = ceil($state / 8);
+                        $days = ceil($state / 8);
 
-                    return "{$state} hrs / {$days} days";
-                })
-                ->sortable(),
+                        return "{$state} hrs / {$days} days";
+                    })
+                    ->sortable(),
                 // TextColumn::make('competency_standard')
                 //     ->searchable(),
                 IconColumn::make('is_active')

@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'name' => 'Administrator',
-                'email' => 'administrator@example.com',
+                'email' => 'administrator@gmail.com',
                 'password' => Hash::make('password'),
                 'role' => UserRole::Administrator,
                 'qualification_id' => null,
@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'name' => 'Registrar',
-                'email' => 'registrar@example.com',
+                'email' => 'registrar@gmail.com',
                 'password' => Hash::make('password'),
                 'role' => UserRole::Registrar,
                 'qualification_id' => null,
@@ -44,15 +44,14 @@ class UserSeeder extends Seeder
             ],
             [
                 'name' => 'Trainer One',
-                'email' => 'trainer1@example.com',
+                'email' => 'trainer1@gmail.com',
                 'password' => Hash::make('password'),
                 'role' => UserRole::Trainer,
-                'qualification_id' => 1,
+                'qualification_id' => 2,
                 'email_verified_at' => now(),
             ],
-          
+
         ]);
 
-   
     }
 }

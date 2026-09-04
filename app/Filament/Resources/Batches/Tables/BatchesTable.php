@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Batches\Tables;
 
+use App\Models\Batch;
+use App\Models\Screening;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -17,6 +19,24 @@ class BatchesTable
             ->columns([
                 TextColumn::make('batch_code')
                     ->searchable(),
+                TextColumn::make('available_slots')
+                    ->label('Available Slots')
+                    ->state(function (Batch $record): int {
+                        if (! $record->ntp) {
+                            return 0;
+                        }
+
+                        $enrolledCount = Screening::query()
+                            ->where('enrolled_status', true)
+                            ->whereHas('batch', function ($query) use ($record): void {
+                                $query->where('ntp_id', $record->ntp_id);
+                            })
+                            ->count();
+
+                        return max((int) $record->ntp->approve_slots - $enrolledCount, 0);
+                    })
+                    ->formatStateUsing(fn (int $state): string => $state === 0 ? 'Full' : (string) $state)
+                    ->sortable(false),
                 TextColumn::make('ntp.rqm_code')
                     ->searchable(),
                 TextColumn::make('batch_name')
@@ -35,16 +55,16 @@ class BatchesTable
                     ->sortable(),
                 TextColumn::make('schedule')
                     ->searchable()
-                ->sortable()
-                ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('venue')
                     ->searchable()
-                ->sortable()
-                ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
                     ->searchable()
-                ->sortable()
-                ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

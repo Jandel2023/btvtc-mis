@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use BoreiStudio\FilamentMercadoPago\MercadoPagoPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -20,7 +19,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -35,6 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('images/btvtc-logo.ico'))
             ->brandLogoHeight('3rem')
             ->favicon(asset('images/btvtc-logo.ico'))
+            ->font(null, preload: [])
             ->emailVerification()
             ->emailChangeVerification()
             ->profile()

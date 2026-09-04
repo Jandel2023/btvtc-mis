@@ -4,16 +4,21 @@ namespace App\Filament\Resources\Screenings\Tables;
 
 use App\Filament\Exports\ScreeningExporter;
 use App\Models\Screening;
+use chillerlan\QRCode\QRCode;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\URL;
 
 class ScreeningsTable
 {
@@ -38,10 +43,10 @@ class ScreeningsTable
                     })
                     ->sortable(false),
 
-
                 // BATCH
                 TextColumn::make('batch.batch_name')
                     ->label('Batch')
+                    ->copyable()
                     ->sortable()
                     ->searchable(),
                 // TOTAL SCORE
@@ -54,7 +59,7 @@ class ScreeningsTable
                     ->searchable(),
 
                 // ENROLLMENT STATUS
-               TextColumn::make('enrolled_status')
+                TextColumn::make('enrolled_status')
                     ->label('Enrollment Status')
                     ->formatStateUsing(fn (?bool $state): string => match ($state) {
                         true => 'Enrolled',
@@ -81,8 +86,26 @@ class ScreeningsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-
-         ->filters([
+            ->filters([
+                Filter::make('created_at')
+                    ->label('Period')
+                    ->form([
+                        DatePicker::make('from')
+                            ->label('From'),
+                        DatePicker::make('until')
+                            ->label('Until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['from'] ?? null,
+                                fn (Builder $query, string $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['until'] ?? null,
+                                fn (Builder $query, string $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    }),
                 SelectFilter::make('enrolled_status')
                     ->label('Enrollment Status')
                     ->options([
@@ -94,8 +117,9 @@ class ScreeningsTable
             // EXPORT
             ->headerActions([
                 ExportAction::make('export')
-                    ->label('Export Screenings')
+                    ->label('Export Trainees')
                     ->icon('heroicon-o-arrow-down-tray')
+                    ->fileName('Exported-Trainees')
                     ->exporter(ScreeningExporter::class)
                     ->formats([
                         ExportFormat::Csv,
@@ -105,26 +129,47 @@ class ScreeningsTable
             // RECORD ACTIONS
             ->recordActions([
 
+                // VIEW ID CARD
+                Action::make('viewId')
+                    ->label('View ID')
+                    ->icon('heroicon-o-identification')
+                    ->color('info')
+                    ->modalHeading(fn (Screening $record): string => "Trainee ID - {$record->full_name}")
+                    ->modalWidth('6xl')
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->modalContent(function (Screening $record): View {
+                        $record->loadMissing('batch.qualification');
+
+                        $verificationUrl = URL::temporarySignedRoute(
+                            'trainee.verification',
+                            now()->addYear(),
+                            ['screening' => $record],
+                        );
+
+                        return view('filament.id-card', [
+                            'record' => $record,
+                            'qrCode' => (new QRCode)->render($verificationUrl),
+                        ]);
+                    }),
+
                 // ENROLL
-             Action::make('enroll')
-    ->label('Enroll')
-    ->icon('heroicon-m-check-circle')
-    ->color('success')
-    ->button()
-    ->size('sm')
-    ->requiresConfirmation()
-    ->modalHeading('Confirm Enrollment')
-    ->modalDescription(
-        'Are you sure you want to enroll this trainee?'
-    )
-    ->modalSubmitActionLabel('Enroll')
-
-                  ->visible(
-                    fn (Screening $record): bool =>
-                        $record->status === 'Passed'
-                        && ! $record->enrolled_status
-                        )
-
+                Action::make('enroll')
+                    ->label('Enroll')
+                    ->icon('heroicon-m-check-circle')
+                    ->color('success')
+                    ->button()
+                    ->size('sm')
+                    ->requiresConfirmation()
+                    ->modalHeading('Confirm Enrollment')
+                    ->modalDescription(
+                        'Are you sure you want to enroll this trainee?'
+                    )
+                    ->modalSubmitActionLabel('Enroll')
+                    ->visible(
+                        fn (Screening $record): bool => $record->status === 'Passed'
+                            && ! $record->enrolled_status
+                    )
                     ->action(function (Screening $record): void {
 
                         $batch = $record->batch;
@@ -190,7 +235,7 @@ class ScreeningsTable
                 // EditAction::make(),
             ])
 
-            // BULK ACTIONS
+                    // BULK ACTIONS
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
