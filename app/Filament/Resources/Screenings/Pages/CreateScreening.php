@@ -10,5 +10,5 @@ class CreateScreening extends CreateRecord
 {
     protected static string $resource = ScreeningResource::class;
 
-    protected Width | string | null $maxContentWidth = Width::Full;
+    // protected Width | string | null $maxContentWidth = Width::Full;
 }

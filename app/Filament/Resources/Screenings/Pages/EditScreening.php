@@ -12,7 +12,7 @@ class EditScreening extends EditRecord
 {
     protected static string $resource = ScreeningResource::class;
 
-    protected Width | string | null $maxContentWidth = Width::Full;
+    // protected Width | string | null $maxContentWidth = Width::Full;
 
     protected function getHeaderActions(): array
     {
