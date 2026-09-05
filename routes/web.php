@@ -5,7 +5,7 @@ use App\Models\Screening;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
+
 
 Route::get('/', function () {
     return view('welcome');

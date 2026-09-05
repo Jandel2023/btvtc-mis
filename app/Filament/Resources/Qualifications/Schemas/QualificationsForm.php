@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Qualifications\Schemas;
 
-use App\Models\QualificationLevel;
+
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -36,8 +36,10 @@ class QualificationsForm
 
                         Textarea::make('description')
                             ->columnSpanFull(),
-                            
+
                         Toggle::make('is_active')
+                            ->label('Is Active')
+                            ->default(true)
                             ->required(),
             ]);
     }
