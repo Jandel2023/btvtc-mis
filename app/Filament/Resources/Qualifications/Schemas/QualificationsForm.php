@@ -15,25 +15,30 @@ class QualificationsForm
     {
         return $schema
             ->components([
-                TextInput::make('qualification_code')
-                    ->required(),
-                TextInput::make('qualification_title')
-                    ->required(),
-                Select::make('qualification_level_id')
-                    ->label('QualificationLevel')
-                    ->relationship('qualificationLevel','code')
-                    ->required(),
-                Select::make('training_sector_id')
-                    ->relationship('trainingSector','sector_name')
-                    ->required(),
-                TextInput::make('training_hours')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('competency_standard'),
-                Textarea::make('description')
-                    ->columnSpanFull(),
-                Toggle::make('is_active')
-                    ->required(),
+                        TextInput::make('qualification_title')
+                            ->label('Qualification Title')
+                            ->required()
+                            ->maxLength(255),
+
+                        Select::make('qualification_level_id')
+                            ->label('Qualification Level')
+                            ->relationship('qualificationLevel', 'code')
+                            ->required(),
+
+                        Select::make('training_sector_id')
+                            ->label('Training Sector')
+                            ->relationship('trainingSector', 'sector_name')
+                            ->required(),
+
+                        TextInput::make('training_hours')
+                            ->required()
+                            ->numeric(),
+
+                        Textarea::make('description')
+                            ->columnSpanFull(),
+                            
+                        Toggle::make('is_active')
+                            ->required(),
             ]);
     }
 }

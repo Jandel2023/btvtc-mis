@@ -4,7 +4,9 @@ namespace App\Filament\Resources\Screenings\Tables;
 
 use App\Filament\Exports\ScreeningExporter;
 use App\Models\Screening;
+use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -22,6 +24,17 @@ use Illuminate\Support\Facades\URL;
 
 class ScreeningsTable
 {
+    public static function qrCodeMarkup(string $url): string
+    {
+        $options = new QROptions;
+        $options->outputType = QROutputInterface::MARKUP_SVG;
+        $options->outputBase64 = false;
+        $options->margin = 1;
+        $options->scale = 8;
+
+        return (new QRCode($options))->render($url);
+    }
+
     public static function configure(Table $table): Table
     {
         return $table
@@ -124,6 +137,15 @@ class ScreeningsTable
                     ->formats([
                         ExportFormat::Csv,
                     ]),
+
+                   Action::make('exportPdf')
+                    ->label('Export ID as PDF')
+                    ->action(function () {
+                        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.id-reports', ['data' => Screening::all()]);
+                        return response()->streamDownload(fn() => print($pdf->output()), 'id-template-report.pdf');
+                    })
+
+
             ])
 
             // RECORD ACTIONS
@@ -149,7 +171,7 @@ class ScreeningsTable
 
                         return view('filament.id-card', [
                             'record' => $record,
-                            'qrCode' => (new QRCode)->render($verificationUrl),
+                            'qrCode' => static::qrCodeMarkup($verificationUrl),
                         ]);
                     }),
 

@@ -9,6 +9,30 @@ class Qualifications extends Model
 //
     protected $guarded = [];
 
+    protected static function generateQualificationCode(
+    string $title,
+    int $qualificationLevelId
+): ?string {
+    $acronym = collect(
+        preg_split('/\s+/', trim($title))
+    )
+        ->filter()
+        ->map(fn ($word) => strtoupper(substr($word, 0, 1)))
+        ->implode('');
+
+    $level = QualificationLevel::find($qualificationLevelId);
+
+    if (! $level) {
+        return null;
+    }
+
+    $levelCode = strtoupper(
+        str_replace(' ', '-', $level->code)
+    );
+
+    return "{$acronym}-{$levelCode}";
+}
+
     public function qualificationLevel()
     {
         return $this->belongsTo(QualificationLevel::class);
